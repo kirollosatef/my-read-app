@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 export default class BookShelf extends Component {
   static propTypes = {
     books: PropTypes.array.isRequired,
-    onShelfChange: PropTypes.func.isRequired,
+    onUpdateBookShelf: PropTypes.func.isRequired,
   };
   render() {
-    const { books, onShelfChange } = this.props;
+    const { books, onUpdateBookShelf } = this.props;
     return (
       <ol className="books-grid">
         {books.map((book) => (
@@ -26,7 +26,7 @@ export default class BookShelf extends Component {
                   <select
                     value={book.shelf.toLowerCase()}
                     onChange={(event) =>
-                      onShelfChange(book, event.target.value)
+                      onUpdateBookShelf(book, event.target.value)
                     }
                   >
                     <option value="none" disabled>

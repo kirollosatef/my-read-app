@@ -5,11 +5,11 @@ import BookShelf from "./BookShelf";
 export default class BookList extends Component {
   static propTypes = {
     book: PropTypes.object.isRequired,
-    onShelfChange: PropTypes.func.isRequired,
+    onUpdateBookShelf: PropTypes.func.isRequired,
   };
 
   render() {
-    const { books, onShelfChange } = this.props;
+    const { books, onUpdateBookShelf } = this.props;
     const types = ["Currently Reading", "Want to Read", "Read"];
 
     return (
@@ -25,7 +25,7 @@ export default class BookList extends Component {
                       b.shelf.toLowerCase() ===
                       category.replace(/ /g, "").toLowerCase()
                   )}
-                  onUpdateBookShelf={onShelfChange}
+                  onUpdateBookShelf={onUpdateBookShelf}
                 />
               </div>
             </div>

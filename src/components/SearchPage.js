@@ -7,51 +7,58 @@ import { Link } from "react-router-dom";
 export default class SearchPage extends Component {
   state = {
     query: "",
-    duplicateBooks: [],
-    shBooks: [],
+    searchBooks: [],
+    showingBooks: [],
   };
 
   static propTypes = {
-    onShelfChange: PropTypes.func.isRequired,
+    onAddBookToShelf: PropTypes.func.isRequired,
   };
 
   updateQuery = (q) => {
     this.setState({ query: q });
     BooksAPI.search(q, 20).then((res) => {
       if (res.error) {
-        this.setState({ duplicateBooks: [] });
+        this.setState({ searchBooks: [] });
       } else {
-        this.setState({ duplicateBooks: res });
-        this.showingBooks(res);
+        this.setState({ searchBooks: res });
+        this.updateShowingBooks(res);
       }
     });
   };
 
-  handleNoneShelf = (books) => {
+  setShelfNone = (books) => {
     let newBooks = books.map((b) => ({ ...b, shelf: "none" }));
     return newBooks;
   };
 
-  makeUniqueBooks = (books) => {
+  makeUniqueArray = (books) => {
     return books.filter(
       (b, i) => books.findIndex((el) => el["id"] === b["id"]) === i
     );
   };
 
-  showingBooks = (shBooks) => {
-    let books = this.props.books;
-    let uniqueBooks = this.makeUniqueBooks([...shBooks, ...books]);
-    this.setState({ shBooks: uniqueBooks });
+  updateShowingBooks = (srchBooks) => {
+    const books = this.props.books;
+    let showingBooks = srchBooks.map((b) => {
+      let book = books.find((bk) => bk.id === b.id);
+      if (book) {
+        return book;
+      } else {
+        return b;
+      }
+    });
+    this.setState({ showingBooks: showingBooks });
   };
 
   render() {
-    const onShelfChange = this.props.onShelfChange;
-    const onSearchPage = this.props.onSearchPage;
+    const onSetSearchPage = this.props.onSetSearchPage;
+    const onAddBookToShelf = this.props.onAddBookToShelf;
 
     return (
       <div className="search-books">
         <div className="search-books-bar">
-          <Link className="close-search" onClick={onSearchPage}>
+          <Link className="close-search" onClick={onSetSearchPage}>
             Close
           </Link>
           <div className="search-books-input-wrapper">
@@ -63,7 +70,7 @@ export default class SearchPage extends Component {
                 onChange={(event) => {
                   this.updateQuery(event.target.value);
                   this.makeUniqueArray(
-                    this.props.books.concat(this.state.shBooks)
+                    this.props.books.concat(this.state.showingBooks)
                   );
                 }}
               />
@@ -71,11 +78,11 @@ export default class SearchPage extends Component {
           </div>
         </div>
         <div className="search-books-results">
-          {this.state.shBooks.length > 0 &&
+          {this.state.showingBooks.length > 0 &&
             this.state.query.trim().length > 0 && (
               <BookShelf
-                books={this.state.shBooks}
-                onUpdateBookShelf={onShelfChange}
+                books={this.state.showingBooks}
+                onUpdateBookShelf={onAddBookToShelf}
               />
             )}
         </div>

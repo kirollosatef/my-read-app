@@ -25,7 +25,7 @@ export default class App extends React.Component {
     return shelf;
   }
 
-  onShelfChange = (book, shelf) => {
+  updateBookShelf = (book, shelf) => {
     BooksAPI.update(book, shelf).then((res) => {
       book.shelf = this.toCamelShelf(shelf);
       this.setState((state) => ({
@@ -51,6 +51,7 @@ export default class App extends React.Component {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
+          // if Show Search Page display Search Page component
           <Route
             path="/search"
             render={({ history }) => (
@@ -65,6 +66,7 @@ export default class App extends React.Component {
             )}
           />
         ) : (
+          // if not Show Search Page display book list in the main UI
           <Route
             exact
             path="/"
@@ -73,11 +75,11 @@ export default class App extends React.Component {
                 <div className="list-books-title">
                   <h1>My Reads</h1>
                 </div>
-                <BooksList
+                <BookList
                   books={this.state.books}
                   onUpdateBookShelf={this.updateBookShelf}
                 />
-                <BooksSearch
+                <BookSearch
                   onSetSearchPage={() =>
                     this.setState({ showSearchPage: true })
                   }
