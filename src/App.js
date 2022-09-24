@@ -51,7 +51,6 @@ export default class App extends React.Component {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
-          // if Show Search Page display Search Page component
           <Route
             path="/search"
             render={({ history }) => (
@@ -66,7 +65,6 @@ export default class App extends React.Component {
             )}
           />
         ) : (
-          // if not Show Search Page display book list in the main UI
           <Route
             exact
             path="/"
