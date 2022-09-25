@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import * as BooksAPI from "../BooksAPI";
-import BookShelf from "./BookShelf";
+import BooksShelf from "./BooksShelf";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 
-export default class SearchPage extends Component {
+export class BooksSearchPage extends Component {
   state = {
     query: "",
     searchBooks: [],
@@ -14,41 +13,37 @@ export default class SearchPage extends Component {
   static propTypes = {
     onAddBookToShelf: PropTypes.func.isRequired,
   };
-
   updateQuery = (q) => {
     this.setState({ query: q });
-    BooksAPI.search(q, 20).then((res) => {
-      if (res.error) {
-        this.setState({ searchBooks: [] });
-      } else {
+    setTimeout(() => {
+      BooksAPI.search(q, 20).then((res) => {
         this.setState({ searchBooks: res });
         this.updateShowingBooks(res);
-      }
-    });
+      });
+    }, 200);
   };
 
-  setShelfNone = (books) => {
-    let newBooks = books.map((b) => ({ ...b, shelf: "none" }));
-    return newBooks;
+  setShelfNone = (arr) => {
+    let newArray = arr.map((obj) => ({ ...obj, shelf: "none" }));
+    return newArray;
   };
 
-  makeUniqueArray = (books) => {
-    return books.filter(
-      (b, i) => books.findIndex((el) => el["id"] === b["id"]) === i
+  makeUniqueArray = (arr) => {
+    return arr.filter(
+      (el, index) => arr.findIndex((a) => a["id"] === el["id"]) === index
     );
   };
 
   updateShowingBooks = (srchBooks) => {
-    const books = this.props.books;
-    let showingBooks = srchBooks.map((b) => {
-      let book = books.find((bk) => bk.id === b.id);
-      if (book) {
-        return book;
+    if (srchBooks.length > 0 && this.state.query.trim().length > 0) {
+      if (srchBooks[0].hasOwnProperty("shelf")) {
+        this.setState({ showingBooks: srchBooks });
       } else {
-        return b;
+        this.setState({
+          showingBooks: this.setShelfNone(srchBooks),
+        });
       }
-    });
-    this.setState({ showingBooks: showingBooks });
+    }
   };
 
   render() {
@@ -58,9 +53,9 @@ export default class SearchPage extends Component {
     return (
       <div className="search-books">
         <div className="search-books-bar">
-          <Link className="close-search" onClick={onSetSearchPage}>
+          <a className="close-search" onClick={onSetSearchPage}>
             Close
-          </Link>
+          </a>
           <div className="search-books-input-wrapper">
             {
               <input
@@ -78,15 +73,19 @@ export default class SearchPage extends Component {
           </div>
         </div>
         <div className="search-books-results">
-          {this.state.showingBooks.length > 0 &&
-            this.state.query.trim().length > 0 && (
-              <BookShelf
-                books={this.state.showingBooks}
-                onUpdateBookShelf={onAddBookToShelf}
-              />
-            )}
+          {
+            this.state.showingBooks.length > 0 &&
+              this.state.query.trim().length > 0 && (
+                <BooksShelf
+                  books={this.state.showingBooks}
+                  onUpdateBookShelf={onAddBookToShelf}
+                />
+              )
+          }
         </div>
       </div>
     );
   }
 }
+
+export default BooksSearchPage;

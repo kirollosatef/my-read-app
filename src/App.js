@@ -1,12 +1,12 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import BookList from "./components/SearchPage";
-import BookSearch from "./components/BookSearch";
-import SearchPage from "./components/SearchPage";
+import BooksList from "./components/BooksList";
+import BooksSearch from "./components/BooksSearch";
+import BooksSearchPage from "./components/BooksSearchPage";
 import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 
-export default class App extends React.Component {
+class App extends React.Component {
   state = {
     books: [],
     showSearchPage: false,
@@ -18,18 +18,20 @@ export default class App extends React.Component {
     });
   }
 
-  toCamelShelf(s) {
-    let shelf = s;
-    s === "currentlyreading" && (shelf = "currentlyReading");
-    s === "wanttoread" && (shelf = "wantToRead");
+  toCamelShelf(Shelf) {
+    let shelf = Shelf;
+    Shelf === "currentlyreading" && (shelf = "currentlyReading");
+    Shelf === "wanttoread" && (shelf = "wantToRead");
     return shelf;
   }
 
   updateBookShelf = (book, shelf) => {
-    BooksAPI.update(book, shelf).then((res) => {
-      book.shelf = this.toCamelShelf(shelf);
+    shelf = this.toCamelShelf(shelf);
+    BooksAPI.update(book, shelf).then(() => {
       this.setState((state) => ({
-        books: state.books.filter((b) => b.id !== book.id).concat([book]),
+        books: state.books.map((bk) =>
+          bk.id === book.id ? { ...bk, shelf: shelf } : bk
+        ),
       }));
     });
   };
@@ -37,13 +39,11 @@ export default class App extends React.Component {
   addBookToShelf = (book, shelf) => {
     shelf = this.toCamelShelf(shelf);
     book.shelf = shelf;
-    const books = this.state.books;
-    const id = books.findIndex((b) => b.id === book.id);
-    if (id === -1) {
-      this.setState({
-        books: books.concat([book]),
-      });
-      this.onShelfChange(book, shelf);
+    let idx = this.state.books.findIndex((bk) => bk["id"] === book.id);
+    let bk = this.state.books;
+    if (idx === -1) {
+      this.setState({ books: bk.concat(book) });
+      this.updateBookShelf(book, shelf);
     }
   };
 
@@ -54,7 +54,7 @@ export default class App extends React.Component {
           <Route
             path="/search"
             render={({ history }) => (
-              <SearchPage
+              <BooksSearchPage
                 books={this.state.books}
                 onSetSearchPage={() => {
                   this.setState({ showSearchPage: false });
@@ -73,11 +73,11 @@ export default class App extends React.Component {
                 <div className="list-books-title">
                   <h1>My Reads</h1>
                 </div>
-                <BookList
+                <BooksList
                   books={this.state.books}
                   onUpdateBookShelf={this.updateBookShelf}
                 />
-                <BookSearch
+                <BooksSearch
                   onSetSearchPage={() =>
                     this.setState({ showSearchPage: true })
                   }
@@ -90,3 +90,5 @@ export default class App extends React.Component {
     );
   }
 }
+
+export default App;
