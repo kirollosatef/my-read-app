@@ -15,23 +15,21 @@ class BooksList extends Component {
     return (
       <div className="list-books-content">
         <div>
-          {
-            categories.map((category, index) => (
-              <div className="bookshelf" key={index}>
-                <h2 className="bookshelf-title">{category}</h2>
-                <div className="bookshelf-books">
-                  <BooksShelf
-                    books={books.filter(
-                      (mybook) =>
-                        mybook.shelf.toLowerCase() ===
-                        category.replace(/ /g, "").toLowerCase()
-                    )}
-                    onUpdateBookShelf={onUpdateBookShelf}
-                  />
-                </div>
+          {categories.map((category, index) => (
+            <div className="bookshelf" key={index}>
+              <h2 className="bookshelf-title">{category}</h2>
+              <div className="bookshelf-books">
+                <BooksShelf
+                  books={books.filter(
+                    (mybook) =>
+                      mybook.shelf.toLowerCase() ===
+                      category.replace(/ /g, "").toLowerCase()
+                  )}
+                  onUpdateBookShelf={onUpdateBookShelf}
+                />
               </div>
-            ))
-          }
+            </div>
+          ))}
         </div>
       </div>
     );

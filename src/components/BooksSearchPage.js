@@ -73,15 +73,13 @@ export class BooksSearchPage extends Component {
           </div>
         </div>
         <div className="search-books-results">
-          {
-            this.state.showingBooks.length > 0 &&
-              this.state.query.trim().length > 0 && (
-                <BooksShelf
-                  books={this.state.showingBooks}
-                  onUpdateBookShelf={onAddBookToShelf}
-                />
-              )
-          }
+          {this.state.showingBooks.length > 0 &&
+            this.state.query.trim().length > 0 && (
+              <BooksShelf
+                books={this.state.showingBooks}
+                onUpdateBookShelf={onAddBookToShelf}
+              />
+            )}
         </div>
       </div>
     );

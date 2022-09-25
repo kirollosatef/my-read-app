@@ -1,94 +1,35 @@
-# MyReads Project
+# My Reads App
 
-This is the starter template for the final assessment project for Udacity's React Fundamentals course. The goal of this template is to save you time by providing a static example of the CSS and HTML markup that may be used, but without any of the React code that is needed to complete the project. If you choose to start with this template, your job will be to add interactivity to the app by refactoring the static code in this template.
+I created this website as a project for my Front-End Web Development Nanodegree from Udacity. This website allows the user to keep track of books that have been read, are currently being read, or that he or she would like to read.
 
-Of course, you are free to start this project from scratch if you wish! Just be sure to use [Create React App](https://reactjs.org/docs/create-a-new-react-app.html) to bootstrap the project.
+## Download
 
-## TL;DR
+These instructions will allow you to get a copy of the project that runs on your local machine.
 
-To get started developing right away:
+### Prerequisites
 
-- install all project dependencies with `npm install`
-- start the development server with `npm start`
+* [Git](https://git-scm.com/downloads)
+* [npm](https://www.npmjs.com/get-npm)
 
-## What You're Getting
+### Installing
 
-```bash
-├── CONTRIBUTING.md
-├── README.md - This file.
-├── SEARCH_TERMS.md # The whitelisted short collection of available search terms for you to use with your app.
-├── package.json # npm package manager file. It's unlikely that you'll need to modify this.
-├── public
-│   ├── favicon.ico # React Icon, You may change if you wish.
-│   └── index.html # DO NOT MODIFY
-└── src
-    ├── App.css # Styles for your app. Feel free to customize this as you desire.
-    ├── App.js # This is the root of your app. Contains static HTML right now.
-    ├── App.test.js # Used for testing. Provided with Create React App. Testing is encouraged, but not required.
-    ├── BooksAPI.js # A JavaScript API for the provided Udacity backend. Instructions for the methods are below.
-    ├── icons # Helpful images for your app. Use at your discretion.
-    │   ├── add.svg
-    │   ├── arrow-back.svg
-    │   └── arrow-drop-down.svg
-    ├── index.css # Global styles. You probably won't need to change anything here.
-    └── index.js # You should not need to modify this file. It is used for DOM rendering only.
-```
+Instructions to clone and run the project:
+1. In Terminal, clone the git project using `$ git clone https://github.com/grantiverson/myreads.git`.
+2. Navigate to the root directory for the project.
+3. Run the command `npm install` to install the necessary dependancies
+3. Run the command `npm start` to start the server. This will automatically open the website in your browser.
 
-Remember that good React design practice is to create new JS files for each component and use import/require statements to include them where they are needed.
+## Built with
 
-## Backend Server
+* [React](https://reactjs.org/) - Text Editor
+* [Create React App](https://github.com/facebookincubator/create-react-app) - React scaffolding package
+* [React Router](https://github.com/ReactTraining/react-router) - Declarative routing for React
+* [Atom](https://atom.io) - Text Editor
+* [JavaScript ES6](https://developer.mozilla.org/en-US/docs/Web/JavaScript) - Programming Language
+* [HTML5](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5) - Markup Language
+* [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS3) - Styling
+* [Google Chrome](https://www.google.com/chrome/) - Browser and Debugging Tool
 
-To simplify your development process, we've provided a backend server for you to develop against. The provided file [`BooksAPI.js`](src/BooksAPI.js) contains the methods you will need to perform necessary operations on the backend:
+### How I made this app
 
-- [`getAll`](#getall)
-- [`update`](#update)
-- [`search`](#search)
-
-### `getAll`
-
-Method Signature:
-
-```js
-getAll();
-```
-
-- Returns a Promise which resolves to a JSON object containing a collection of book objects.
-- This collection represents the books currently in the bookshelves in your app.
-
-### `update`
-
-Method Signature:
-
-```js
-update(book, shelf);
-```
-
-- book: `<Object>` containing at minimum an `id` attribute
-- shelf: `<String>` contains one of ["wantToRead", "currentlyReading", "read"]
-- Returns a Promise which resolves to a JSON object containing the response data of the POST request
-
-### `search`
-
-Method Signature:
-
-```js
-search(query);
-```
-
-- query: `<String>`
-- Returns a Promise which resolves to a JSON object containing a collection of a maximum of 20 book objects.
-- These books do not know which shelf they are on. They are raw results only. You'll need to make sure that books have the correct state while on the search page.
-
-## Important
-
-The backend API uses a fixed set of cached search results and is limited to a particular set of search terms, which can be found in [SEARCH_TERMS.md](SEARCH_TERMS.md). That list of terms are the _only_ terms that will work with the backend, so don't be surprised if your searches for Basket Weaving or Bubble Wrap don't come back with any results.
-
-## Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). You can find more information on how to perform common tasks [here](https://github.com/facebook/create-react-app/blob/main/packages/cra-template/template/README.md).
-
-## Contributing
-
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
-
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+I began by scaffolding out the app using [Create React App](https://github.com/facebookincubator/create-react-app). Then I downloaded Udacity's [BooksAPI.js](https://github.com/udacity/reactnd-project-myreads-starter/tree/master/src/booksAPI.js), which allows me to retrieve data from a mock server. I wrote the code that fetches the array of books from the Udacity server, then maps over the array to display each book on the appropriate shelf according to its 'shelf' key. Each book has a 'select' tag that allows for switching shelves, or removing the book altogether. Once I got this functionality working, I added a component to search for books to add to the shelf. This component dynamically searches the server for books whose titles match the inputted query as it is entered. I used [React Router](https://github.com/ReactTraining/react-router) to sync the URL with the app's state so that the back button and bookmark browser features still work.
