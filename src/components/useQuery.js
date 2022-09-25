@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import * as BooksAPI from "..//BooksAPI";
+import * as BooksAPI from "../BooksAPI";
 
 import { useDebounce } from "use-debounce";
 

@@ -1,16 +1,21 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import Book from './Book';
 
-class BooksSearch extends Component {
-  render() {
+const Shelf = ({ books, title, updateBookShelf }) => {
     return (
-      <div className="open-search">
-        <Link to="/search" onClick={this.props.onSetSearchPage}>
-          Add a book
-        </Link>
-      </div>
-    );
-  }
+        <div className="bookshelf">
+            <h2 className="bookshelf-title">{title}</h2>
+            <div className="bookshelf-books">
+                <ol className="books-grid">
+                    {books.map(b => (
+                        <li key={b.id}>
+                            <Book book={b} changeBookShelf={updateBookShelf}/>
+                        </li>
+                    ))}
+                </ol>
+            </div>
+        </div>
+    )
 }
 
-export default BooksSearch;
+export default Shelf;
