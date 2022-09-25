@@ -1,94 +1,109 @@
-import React from "react";
-import { Route } from "react-router-dom";
-import BooksList from "./components/BooksList";
-import BooksSearch from "./components/BooksSearch";
-import BooksSearchPage from "./components/BooksSearchPage";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
+import Shelves from "./components/Shelves";
+import Book from "./components/Book";
+import useQuery from "./components/useQuery";
 import "./App.css";
 
-class App extends React.Component {
-  state = {
-    books: [],
-    showSearchPage: false,
+const BooksApp = () => {
+  const [books, setBooks] = useState([]);
+  const [mapOfIdToBooks, setMapOfIdToBooks] = useState(new Map());
+
+  const [query, setQuery] = useState("");
+  const [searchBooks, setSearchBooks] = useQuery(query);
+  const [mergedBooks, setMergedBooks] = useState([]);
+
+  useEffect(() => {
+    BooksAPI.getAll().then((data) => {
+      setBooks(data);
+      setMapOfIdToBooks(createMapOfBooks(data));
+    });
+  }, []);
+
+  useEffect(() => {
+    const combined = searchBooks.map((book) => {
+      if (mapOfIdToBooks.has(book.id)) {
+        return mapOfIdToBooks.get(book.id);
+      } else {
+        return book;
+      }
+    });
+    setMergedBooks(combined);
+  }, [searchBooks]);
+
+  const createMapOfBooks = (books) => {
+    const map = new Map();
+    books.map((book) => map.set(book.id, book));
+    return map;
   };
 
-  componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ books });
+  const updateBookShelf = (book, whereTo) => {
+    const updatedBooks = books.map((b) => {
+      if (b.id === book.id) {
+        book.shelf = whereTo;
+        return book;
+      }
+      return b;
     });
-  }
-
-  toCamelShelf(Shelf) {
-    let shelf = Shelf;
-    Shelf === "currentlyreading" && (shelf = "currentlyReading");
-    Shelf === "wanttoread" && (shelf = "wantToRead");
-    return shelf;
-  }
-
-  updateBookShelf = (book, shelf) => {
-    shelf = this.toCamelShelf(shelf);
-    BooksAPI.update(book, shelf).then(() => {
-      this.setState((state) => ({
-        books: state.books.map((bk) =>
-          bk.id === book.id ? { ...bk, shelf: shelf } : bk
-        ),
-      }));
-    });
-  };
-
-  addBookToShelf = (book, shelf) => {
-    shelf = this.toCamelShelf(shelf);
-    book.shelf = shelf;
-    let idx = this.state.books.findIndex((bk) => bk["id"] === book.id);
-    let bk = this.state.books;
-    if (idx === -1) {
-      this.setState({ books: bk.concat(book) });
-      this.updateBookShelf(book, shelf);
+    if (!mapOfIdToBooks.has(book.id)) {
+      book.shelf = whereTo;
+      updatedBooks.push(book);
     }
+    setBooks(updatedBooks);
+    BooksAPI.update(book, whereTo);
   };
 
-  render() {
-    return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <Route
-            path="/search"
-            render={({ history }) => (
-              <BooksSearchPage
-                books={this.state.books}
-                onSetSearchPage={() => {
-                  this.setState({ showSearchPage: false });
-                  history.push("/");
-                }}
-                onAddBookToShelf={this.addBookToShelf}
-              />
-            )}
-          />
-        ) : (
-          <Route
-            exact
-            path="/"
-            render={() => (
-              <div className="list-books">
-                <div className="list-books-title">
-                  <h1>My Reads</h1>
+  return (
+    <div className="app">
+      <Router>
+        <Switch>
+          <Route path="/search">
+            <div className="search-books">
+              <div className="search-books-bar">
+                <Link to="/">
+                  <button className="close-search">Close</button>
+                </Link>
+                <div className="search-books-input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Search by title or author"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
                 </div>
-                <BooksList
-                  books={this.state.books}
-                  onUpdateBookShelf={this.updateBookShelf}
-                />
-                <BooksSearch
-                  onSetSearchPage={() =>
-                    this.setState({ showSearchPage: true })
-                  }
-                />
               </div>
-            )}
-          />
-        )}
-      </div>
-    );
-  }
-}
+              <div className="search-books-results">
+                <ol className="books-grid">
+                  {mergedBooks.map((b) => (
+                    <li key={b.id}>
+                      <Book book={b} changeBookShelf={updateBookShelf} />
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </Route>
+          <Route path="/">
+            <div className="list-books">
+              {console.log("SEARCH", searchBooks)}
+              <div className="list-books-title">
+                <h1>MyReads</h1>
+              </div>
+              <div className="list-books-content">
+                <Shelves books={books} updateBookShelf={updateBookShelf} />
+              </div>
+              <div className="open-search">
+                <Link to="/search">
+                  <button>Add a book</button>
+                </Link>
+              </div>
+            </div>
+          </Route>
+        </Switch>
+      </Router>
+    </div>
+  );
+};
 
-export default App;
+export default BooksApp;
